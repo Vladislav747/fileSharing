@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from endpoints.user import router as user_router
+from endpoints.message import router as message_router
 
 app = FastAPI()
 
