@@ -28,7 +28,7 @@ async def root():
 
 @router.get("/{message_id}")
 async def get_message(message_id: int):
-    return {"user": messages_database[message_id - 1]}
+    return {"message": messages_database[message_id - 1]}
 
 
 @router.post("/", response_model=Message)

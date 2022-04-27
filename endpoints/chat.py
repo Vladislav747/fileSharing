@@ -1,9 +1,10 @@
 from fastapi import APIRouter
-from schemas.user import User, UserInDb
+from schemas.chat import Chat
+from crud.chat import chats_db
 
 router = APIRouter(
-    prefix="/user",
-    tags=['Users']
+    prefix="/chat",
+    tags=['Chats']
 )
 
 
@@ -11,40 +12,26 @@ router = APIRouter(
 async def root():
     return {"message": "Hello World"}
 
-users_database = [
-    {
-        "id": 1,
-        "login": "main",
-        "password": "asd",
-        "name": "asd"
-    },
-    {
-        "id": 2,
-        "login": "main",
-        "password": "asd",
-        "name": "asd"
-    }
-]
 
-@router.get("/{user_id}")
-async def get_user(user_id: int):
-    return {"user": users_database[user_id - 1]}
+@router.get("/{chat_id}")
+async def get_chat(chat_id: int):
+    return {"chat": chats_db[chat_id - 1]}
 
 
-@router.post("/", response_model=UserInDb)
-async def add_user(user: User):
-    user_db = UserInDb(id=len(users_database) + 1, **user.dict())
+@router.post("/", response_model=Chat)
+async def add_message(chat: Chat):
+    chat_db = Chat(id=len(chats_db) + 1, **chat.dict())
 
-    return user_db
+    return chat_db
 
 
-@router.put("/{user_id}", response_model=UserInDb)
-async def update_user(user_id: int, user: User):
-    user_db = users_database[user_id - 1]
+@router.put("/{user_id}", response_model=Chat)
+async def update_user(chat_id: int, user: Chat):
+    user_db = chats_db[chat_id - 1]
     for param, value in user.dict().items():
         user_db[param] = value
     return user_db
 
-@router.delete("/{user_id}", response_model=UserInDb)
-async def del_user(user_id: int):
-    del users_database[user_id]
+@router.delete("/{user_id}", response_model=Chat)
+async def del_user(chat_id: int):
+    del chats_db[chat_id]
