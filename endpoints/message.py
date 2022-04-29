@@ -18,6 +18,18 @@ messages_database = [
         "user_id": 2,
         "chat_id": 1,
         "message": "Hello to you",
+    },
+    {
+        "id": 3,
+        "user_id": 2,
+        "chat_id": 1,
+        "message": "Hello to you",
+    },
+    {
+        "id": 4,
+        "user_id": 2,
+        "chat_id": 1,
+        "message": "Hello to you",
     }
 ]
 
