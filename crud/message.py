@@ -22,5 +22,11 @@ messages_database = [
         "user_id": 2,
         "chat_id": 1,
         "message": "Hello to you",
+    },
+{
+        "id": 5,
+        "user_id": 2,
+        "chat_id": 1,
+        "message": "Hello to you",
     }
 ]
