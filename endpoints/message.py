@@ -1,37 +1,12 @@
 from fastapi import APIRouter
 from schemas.message import Message
+from crud.message import messages_database
+from crud.chat import chats_db
 
 router = APIRouter(
     prefix="/messages",
     tags=['Messages']
 )
-
-messages_database = [
-    {
-        "id": 1,
-        "user_id": 1,
-        "chat_id": 1,
-        "message": "Hello",
-    },
-    {
-        "id": 2,
-        "user_id": 2,
-        "chat_id": 1,
-        "message": "Hello to you",
-    },
-    {
-        "id": 3,
-        "user_id": 2,
-        "chat_id": 1,
-        "message": "Hello to you",
-    },
-    {
-        "id": 4,
-        "user_id": 2,
-        "chat_id": 1,
-        "message": "Hello to you",
-    }
-]
 
 
 @router.get("/")
@@ -46,7 +21,10 @@ async def get_message(message_id: int):
 @router.post("/", response_model=Message)
 async def add_message(message: Message):
     message_db = Message(id=len(messages_database) + 1, **message.dict())
+    # Поместить запрос в чат
+    x = type(chats_db)
 
+    print(x)
     return message_db
 
 

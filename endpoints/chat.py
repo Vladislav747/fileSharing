@@ -10,7 +10,7 @@ router = APIRouter(
 
 @router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return chats_db
 
 
 @router.get("/{chat_id}")
@@ -19,19 +19,19 @@ async def get_chat(chat_id: int):
 
 
 @router.post("/", response_model=Chat)
-async def add_message(chat: Chat):
+async def add_chat(chat: Chat):
     chat_db = Chat(id=len(chats_db) + 1, **chat.dict())
 
     return chat_db
 
 
 @router.put("/{user_id}", response_model=Chat)
-async def update_user(chat_id: int, user: Chat):
+async def update_chat(chat_id: int, user: Chat):
     user_db = chats_db[chat_id - 1]
     for param, value in user.dict().items():
         user_db[param] = value
     return user_db
 
 @router.delete("/{user_id}", response_model=Chat)
-async def del_user(chat_id: int):
+async def del_chat(chat_id: int):
     del chats_db[chat_id]

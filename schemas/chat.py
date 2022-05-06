@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List
 
 from enum import Enum
 
@@ -12,6 +13,6 @@ class ChatType(str, Enum):
 class Chat(BaseModel):
     id: int
     name: str
-    users_ids: [int]
+    users_ids: int
     type: ChatType
-    messages_ids: [int]
+    messages_ids: List[int]
