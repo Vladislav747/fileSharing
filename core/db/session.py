@@ -2,6 +2,7 @@ from os import getenv
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
 from sqlalchemy.orm import sessionmaker
+#load env
 load_dotenv()
 
 USER = getenv("POSTGRES_USER")
