@@ -10,3 +10,7 @@ alembic revision -m "create table" - Создать первую миграци�
 
 alembic revision --autogenerate -m 'initial'(Перед этим настроить alembic.ini)
 
+alembic upgrade head - Применить все миграции
+
+alembic upgrade e34025b07af2 - Применить конкретную миграцию за номером  e34025b07af2
+
