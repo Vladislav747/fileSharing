@@ -31,7 +31,7 @@ async def create_user(user: User, db=Depends(get_db)):
     return result
 
 
-@router.put("/{user_id}", response_model=UserInDB)
+@router.put("/{user_id}", response_model=UserInDb)
 async def update_user(user_id: int, user: User, db=Depends(get_db)):
     """Изменить пользователя"""
     user_db = crud.user.update_user(db=db, user_id=user_id, user=user)
