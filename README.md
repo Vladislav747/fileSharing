@@ -14,3 +14,13 @@ alembic upgrade head - Применить все миграции
 
 alembic upgrade e34025b07af2 - Применить конкретную миграцию за номером  e34025b07af2
 
+Создание миграции
+
+``bash
+.\venv\Scripts\python.exe -m alembic revision --autogenerate -m "Поменяли password на hashed_password"
+``
+
+Запуск воркера celery
+``bash
+python -m celery -A worker worker -l info -Q queue -P solo
+``
