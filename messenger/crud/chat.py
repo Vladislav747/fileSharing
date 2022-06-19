@@ -14,6 +14,7 @@ chat_database = [
         "name": "Чат 1",
         "created_date": datetime(2022, 4, 20, 19, 39, 0),
         "type": ChatType.group,
+        "messages_ids": [],
     }
 ]
 

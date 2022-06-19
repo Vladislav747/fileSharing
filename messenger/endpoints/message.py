@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from schemas.message import Message
 from crud.message import messages_database
 from crud.chat import chat_database
@@ -21,12 +21,19 @@ async def get_message(message_id: int):
 
 @router.post("/", response_model=Message)
 async def add_message(message: Message):
-    message_db = Message(id=len(messages_database) + 1, **message.dict())
+    message_db = Message(id=len(messages_database) + 1, **message.dict()).dict()
+    # Метка что чат найден
+    found_chat = False
     # Поместить id сообщения к чату
     for chat in chat_database:
         if chat["id"] == message_db["chat_id"]:
             chat["messages_ids"].append(len(messages_database) + 1)
-    return message_db
+            found_chat = True
+    # Если чат к которому нужно подцепить сообщение не найден кидаем ошибку
+    if found_chat == True:
+        return message_db
+    else:
+        raise HTTPException(status_code=422, detail="Chat not found")
 
 
 @router.put("/{message_id}", response_model=Message)

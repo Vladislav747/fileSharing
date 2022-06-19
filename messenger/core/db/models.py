@@ -29,3 +29,12 @@ class UserChat(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey('users.id'))
     chat_id = Column(Integer, ForeignKey('chats.id'))
+
+
+class Message(Base):
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    message = Column(String)
+    user_id = Column(DateTime, server_default=func.now())
+    type = Column(String)
