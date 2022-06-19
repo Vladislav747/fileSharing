@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from schemas.message import Message
 from crud.message import messages_database
-from crud.chat import chats_db
+from crud.chat import chat_database
 
 router = APIRouter(
     prefix="/messages",
@@ -23,7 +23,7 @@ async def get_message(message_id: int):
 async def add_message(message: Message):
     message_db = Message(id=len(messages_database) + 1, **message.dict())
     # Поместить id сообщения к чату
-    for chat in chats_db:
+    for chat in chat_database:
         if chat["id"] == message_db["chat_id"]:
             chat["messages_ids"].append(len(messages_database) + 1)
     return message_db
@@ -43,9 +43,9 @@ async def del_message(message_id: int):
     del messages_database[message_id - 1]
     # Пробежаться по всем чатам
     # и посмотреть где содержится id сообщения и удалить из списка
-    for chat in chats_db:
+    for chat in chat_database:
         if message_id in chat["messages_ids"]:
             index = chat["messages_ids"].index(message_id)
             del chat["messages_ids"][index]
 
-    return chats_db
+    return chat_database
