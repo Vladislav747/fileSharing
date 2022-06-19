@@ -47,6 +47,9 @@ async def update_message(message_id: int, message: Message):
 
 @router.delete("/{message_id}")
 async def del_message(message_id: int):
+    # Метка что сообщение найдено
+    found_message = False
+
     del messages_database[message_id - 1]
     # Пробежаться по всем чатам
     # и посмотреть где содержится id сообщения и удалить из списка
