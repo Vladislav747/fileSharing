@@ -39,7 +39,7 @@ def upgrade():
     op.create_table('chats_messages',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('chat_id', sa.Integer(), nullable=True),
-    sa.Column('message_id', sa.Integer(), nullable=True),
+    sa.Column('message_id', sa.Integer(), nullable=True, unique=True),
     sa.ForeignKeyConstraint(['chat_id'], ['chats.id'], ),
     sa.ForeignKeyConstraint(['message_id'], ['messages.id'], ),
     sa.PrimaryKeyConstraint('id')
