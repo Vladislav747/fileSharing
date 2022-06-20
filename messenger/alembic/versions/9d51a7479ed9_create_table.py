@@ -1,4 +1,4 @@
-"""Initial state
+"""Create Table Users
 
 Revision ID: 1b91225ee1f3
 Revises:
