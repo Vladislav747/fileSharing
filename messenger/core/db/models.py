@@ -36,5 +36,19 @@ class Message(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     message = Column(String)
-    user_id = Column(DateTime, server_default=func.now())
-    type = Column(String)
+    created_date = Column(DateTime, server_default=func.now())
+
+class ChatMessage(Base):
+    __tablename__ = "chats_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    chat_id = Column(Integer, ForeignKey('chats.id'))
+    message_id = Column(Integer, ForeignKey('messages.id'))
+
+class UserMessage(Base):
+    __tablename__ = "users_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    message_id = Column(Integer, ForeignKey('messages.id'))
+    user_id = Column(Integer, ForeignKey('users.id'))
+
