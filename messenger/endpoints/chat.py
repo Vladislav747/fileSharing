@@ -40,6 +40,7 @@ async def update_chat(chat_id: int, user: Chat):
     return user_db
 
 
-@router.delete("/{user_id}", response_model=Chat)
-async def del_chat(chat_id: int):
-    del crud.chat_database[chat_id]
+@router.delete("/{chat_id}")
+async def del_chat(chat_id: int, db=Depends(get_db)):
+    crud.delete_chat(db=db, chat_id=chat_id)
+    return "success"

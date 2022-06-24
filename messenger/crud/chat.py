@@ -34,9 +34,35 @@ user_chat_database = [
 
 
 def create_chat(db: Session, chat: schema.Chat):
+    """Создать чат"""
     chat_db = Chat(name=chat.name, type=chat.type, created_date=datetime.now())
     print(chat_db, "here1")
     db.add(chat_db)
     db.commit()
 
     return chat_db
+
+
+def delete_chat(db: Session, chat_id: int):
+    """Удалить чат"""
+    db.query(Chat).filter(Chat.id == chat_id).delete()
+    db.commit()
+
+
+def get_user_by_id(db: Session, chat_id: int):
+    """Получить пользователя по id"""
+    return db.query(Chat).filter(Chat.id == chat_id).one_or_none()
+
+
+def get_user_by_chat_name(db: Session, chat_name: str):
+    """Получить пользователя по логину"""
+    return db.query(Chat).filter(Chat.login == chat_name).one_or_none()
+
+# def update_chat(db: Session, chat_id: int, ch: schema.User):
+#     """Обновить данные чата"""
+#     chat_db = db.query(Chat).filter(Chat.id == chat_id).one_or_none()
+#     for param, value in user.dict().items():
+#         setattr(chat_db, param, value)
+#     db.commit()
+#
+#     return chat_db
