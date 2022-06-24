@@ -58,7 +58,8 @@ def get_user_by_chat_name(db: Session, chat_name: str):
     """Получить пользователя по логину"""
     return db.query(Chat).filter(Chat.login == chat_name).one_or_none()
 
-def update_chat(db: Session, chat: schema.Chat):
+
+def update_chat(db: Session, chat: schema.ChatInDB):
     """Обновить данные чата"""
     chat_db = db.query(Chat).filter(Chat.id == chat.id).one_or_none()
     for param, value in chat.dict().items():

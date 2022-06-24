@@ -18,7 +18,6 @@ class Chat(BaseModel):
 
 class ChatInDB(Chat):
     id: int
-    created_date: datetime
 
     class Config:
         orm_mode = True

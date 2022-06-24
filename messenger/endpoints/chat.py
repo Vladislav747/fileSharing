@@ -38,7 +38,7 @@ async def add_chat(chat: Chat, db=Depends(get_db)):
 
 
 @router.put("/", response_model=ChatInDB)
-async def update_chat(chat: Chat, db=Depends(get_db)):
+async def update_chat(chat: ChatInDB, db=Depends(get_db)):
     """Изменить чат"""
     chat_db = crud.update_chat(db=db, chat=chat)
 
