@@ -1,5 +1,8 @@
 from datetime import datetime
 from enum import Enum
+import schemas.chat as schema
+from core.db.models import Chat
+from sqlalchemy.orm import Session
 
 
 class ChatType(str, Enum):
@@ -28,3 +31,12 @@ user_chat_database = [
         "chat_id": 1
     },
 ]
+
+
+def create_chat(db: Session, chat: schema.Chat):
+    chat_db = Chat(name=chat.name, type=chat.type, created_date=datetime.now())
+    print(chat_db, "here1")
+    db.add(chat_db)
+    db.commit()
+
+    return chat_db

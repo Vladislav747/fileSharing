@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List
+from datetime import datetime
 
 from enum import Enum
 
@@ -11,8 +12,13 @@ class ChatType(str, Enum):
 
 
 class Chat(BaseModel):
-    id: int
     name: str
-    users_ids: int
     type: ChatType
-    messages_ids: List[int]
+
+
+class ChatInDB(Chat):
+    id: int
+    created_date: datetime
+
+    class Config:
+        orm_mode = True

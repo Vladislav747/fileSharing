@@ -1,6 +1,7 @@
-from fastapi import APIRouter
-from schemas.chat import Chat
-from crud.chat import chat_database
+from fastapi import APIRouter, Depends
+from schemas.chat import Chat, ChatInDB
+from deps import get_db
+import crud.chat as crud
 
 router = APIRouter(
     prefix="/chat",
@@ -10,30 +11,30 @@ router = APIRouter(
 
 @router.get("/")
 async def root():
-    return chat_database
+    return crud.chat_database
 
 
 @router.get("/{chat_id}")
 async def get_chat(chat_id: int):
-    return {"chat": chat_database[chat_id - 1]}
+    return {"chat": crud.chat_database[chat_id - 1]}
 
 
 # Список из N последних сообщений в чате
 @router.get("/last/{chat_id}/{number_of_messages}")
 async def get_last_messages(number_of_messages: int):
-    return chat_database[0]["messages_ids"][-number_of_messages:]
+    return crud.chat_database[0]["messages_ids"][-number_of_messages:]
 
 
-@router.post("/", response_model=Chat)
-async def add_chat(chat: Chat):
-    chat_db = Chat(id=len(chat_database) + 1, **chat.dict())
-
-    return chat_db
+@router.post("/", response_model=ChatInDB)
+async def add_chat(chat: Chat, db=Depends(get_db)):
+    result = crud.create_chat(db=db, chat=chat)
+    print(result, "here")
+    return result
 
 
 @router.put("/{user_id}", response_model=Chat)
 async def update_chat(chat_id: int, user: Chat):
-    user_db = chat_database[chat_id - 1]
+    user_db = crud.chat_database[chat_id - 1]
     for param, value in user.dict().items():
         user_db[param] = value
     return user_db
@@ -41,4 +42,4 @@ async def update_chat(chat_id: int, user: Chat):
 
 @router.delete("/{user_id}", response_model=Chat)
 async def del_chat(chat_id: int):
-    del chat_database[chat_id]
+    del crud.chat_database[chat_id]
