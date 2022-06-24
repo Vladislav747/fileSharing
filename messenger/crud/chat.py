@@ -58,11 +58,11 @@ def get_user_by_chat_name(db: Session, chat_name: str):
     """Получить пользователя по логину"""
     return db.query(Chat).filter(Chat.login == chat_name).one_or_none()
 
-# def update_chat(db: Session, chat_id: int, ch: schema.User):
-#     """Обновить данные чата"""
-#     chat_db = db.query(Chat).filter(Chat.id == chat_id).one_or_none()
-#     for param, value in user.dict().items():
-#         setattr(chat_db, param, value)
-#     db.commit()
-#
-#     return chat_db
+def update_chat(db: Session, chat: schema.Chat):
+    """Обновить данные чата"""
+    chat_db = db.query(Chat).filter(Chat.id == chat.id).one_or_none()
+    for param, value in chat.dict().items():
+        setattr(chat_db, param, value)
+    db.commit()
+
+    return chat_db

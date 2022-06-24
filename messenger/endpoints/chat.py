@@ -37,12 +37,12 @@ async def add_chat(chat: Chat, db=Depends(get_db)):
     return result
 
 
-@router.put("/{user_id}", response_model=Chat)
-async def update_chat(chat_id: int, user: Chat):
-    user_db = crud.chat_database[chat_id - 1]
-    for param, value in user.dict().items():
-        user_db[param] = value
-    return user_db
+@router.put("/", response_model=ChatInDB)
+async def update_chat(chat: Chat, db=Depends(get_db)):
+    """Изменить чат"""
+    chat_db = crud.update_chat(db=db, chat=chat)
+
+    return chat_db
 
 
 @router.delete("/{chat_id}", status_code=200)
