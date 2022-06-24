@@ -49,7 +49,7 @@ def delete_chat(db: Session, chat_id: int):
     db.commit()
 
 
-def get_user_by_id(db: Session, chat_id: int):
+def get_chat_by_id(db: Session, chat_id: int):
     """Получить пользователя по id"""
     return db.query(Chat).filter(Chat.id == chat_id).one_or_none()
 
