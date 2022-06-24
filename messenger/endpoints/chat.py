@@ -14,14 +14,19 @@ async def root():
     return crud.chat_database
 
 
-@router.get("/{chat_id}")
-async def get_chat(chat_id: int):
-    return {"chat": crud.chat_database[chat_id - 1]}
+@router.get("/{chat_id}", response_model=ChatInDB)
+async def get_chat(chat_id: int, db=Depends(get_db)):
+    """Получить чат по заданному chat_id"""
+    chat = crud.get_chat_by_id(db=db, chat_id=chat_id)
+    if chat is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    return chat
 
 
-# Список из N последних сообщений в чате
 @router.get("/last/{chat_id}/{number_of_messages}")
 async def get_last_messages(number_of_messages: int):
+    """Список из N последних сообщений в чате"""
     return crud.chat_database[0]["messages_ids"][-number_of_messages:]
 
 
