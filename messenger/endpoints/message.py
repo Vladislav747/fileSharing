@@ -1,6 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends
 from schemas.message import Message, MessageInDB
 import crud.message as crud
+import crud.message_user as crud_message_user
+import crud.chat_message as crud_chat_message
 from deps import get_db
 
 router = APIRouter(
@@ -21,8 +23,11 @@ async def get_message(message_id: int, db=Depends(get_db)):
 
 @router.post("/", response_model=MessageInDB)
 async def add_message(message: Message, db=Depends(get_db)):
-    print(message, "here")
     result = crud.create_message(db, message)
+    # Добавить связку в таблицу MessageUser между пользователем и сообщением
+    result_message_user = crud_message_user.create_link(db, message)
+    # Добавить связку в таблицу ChatUser между чатом и сообщением
+    result_chat_message = crud_chat_message.create_link(db, message)
     return result
     # message_db = Message(id=len(messages_database) + 1, **message.dict()).dict()
     # # Метка что чат найден
