@@ -33,7 +33,7 @@ async def get_last_messages(number_of_messages: int):
 @router.post("/", response_model=ChatInDB)
 async def add_chat(chat: Chat, db=Depends(get_db)):
     result = crud.create_chat(db=db, chat=chat)
-    print(result, "here")
+
     return result
 
 

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
-from schemas.message import Message
+from schemas.message import Message, MessageInDB
 import crud.message as crud
 from deps import get_db
 
@@ -19,21 +19,24 @@ async def get_message(message_id: int, db=Depends(get_db)):
     return crud.get_message_by_id(db, message_id)
 
 
-# @router.post("/", response_model=Message)
-# async def add_message(message: Message):
-#     message_db = Message(id=len(messages_database) + 1, **message.dict()).dict()
-#     # Метка что чат найден
-#     found_chat = False
-#     # Поместить id сообщения к чату
-#     for chat in chat_database:
-#         if chat["id"] == message_db["chat_id"]:
-#             chat["messages_ids"].append(len(messages_database) + 1)
-#             found_chat = True
-#     # Если чат к которому нужно подцепить сообщение не найден кидаем ошибку
-#     if found_chat == True:
-#         return message_db
-#     else:
-#         raise HTTPException(status_code=422, detail="Chat not found")
+@router.post("/", response_model=MessageInDB)
+async def add_message(message: Message, db=Depends(get_db)):
+    print(message, "here")
+    result = crud.create_message(db, message)
+    return result
+    # message_db = Message(id=len(messages_database) + 1, **message.dict()).dict()
+    # # Метка что чат найден
+    # found_chat = False
+    # # Поместить id сообщения к чату
+    # for chat in chat_database:
+    #     if chat["id"] == message_db["chat_id"]:
+    #         chat["messages_ids"].append(len(messages_database) + 1)
+    #         found_chat = True
+    # # Если чат к которому нужно подцепить сообщение не найден кидаем ошибку
+    # if found_chat == True:
+    #     return message_db
+    # else:
+    #     raise HTTPException(status_code=422, detail="Chat not found")
 
 
 @router.put("/{message_id}", response_model=Message)
