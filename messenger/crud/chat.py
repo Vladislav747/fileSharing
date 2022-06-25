@@ -36,7 +36,6 @@ user_chat_database = [
 def create_chat(db: Session, chat: schema.Chat):
     """Создать чат"""
     chat_db = Chat(name=chat.name, type=chat.type, created_date=datetime.now())
-    print(chat_db, "here1")
     db.add(chat_db)
     db.commit()
 
