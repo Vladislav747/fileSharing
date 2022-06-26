@@ -41,18 +41,27 @@ messages_database = [
     }
 ]
 
+
 def create_message(db: Session, message: schema.Message):
     """Создать сообщение"""
-    chat_db = Message(message=message.message)
-    db.add(chat_db)
+    message_db = Message(message=message.message)
+    db.add(message_db)
     db.commit()
 
-    return chat_db
+    return message_db
+
 
 def get_all_messages(db: Session):
     """Получить все сообщения"""
     return db.query(Message).all()
 
+
 def get_message_by_id(db: Session, message_id: int):
     """Получить сообщение по id"""
     return db.query(Message).filter(Message.id == message_id).one_or_none()
+
+
+def delete_message(db: Session, message_id: int):
+    """Удалить сообщение"""
+    db.query(Message).filter(Message.id == message_id).delete()
+    db.commit()

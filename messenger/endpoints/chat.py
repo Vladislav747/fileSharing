@@ -49,7 +49,7 @@ async def update_chat(chat: ChatInDB, db=Depends(get_db)):
 async def del_chat(chat_id: int, db=Depends(get_db)):
     # Проверяем что у нас есть такой чат
     chat = crud.get_chat_by_id(db=db, chat_id=chat_id)
-    print(chat, "chat")
+
     if chat is not None:
         crud.delete_chat(db=db, chat_id=chat_id)
         return "Чат успешно удален"

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, status
 from schemas.message import Message, MessageInDB
 import crud.message as crud
 import crud.message_user as crud_message_user
@@ -53,9 +53,20 @@ async def update_message(message_id: int, message: Message):
     return message_db
 
 
-# @router.delete("/{message_id}")
-# async def del_message(message_id: int):
-#     # Метка что сообщение найдено
+@router.delete("/{message_id}", status_code=200)
+async def del_message(message_id: int, db=Depends(get_db)):
+    # Проверяем что у нас есть такое сообщение
+    message = crud.get_message_by_id(db=db, message_id=message_id)
+    if message is not None:
+        crud.delete_message(db=db, message_id=message_id)
+        return "Сообщение успешно удалено"
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Не найден id сообщение",
+        )
+
+    #     # Метка что сообщение найдено
 #     found_message = False
 #
 #     del messages_database[message_id - 1]
