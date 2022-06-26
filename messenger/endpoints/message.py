@@ -25,23 +25,10 @@ async def get_message(message_id: int, db=Depends(get_db)):
 async def add_message(message: Message, db=Depends(get_db)):
     result = crud.create_message(db, message)
     # Добавить связку в таблицу MessageUser между пользователем и сообщением
-    result_message_user = crud_message_user.create_link(db, message)
+    result_message_user = crud_message_user.create_link(db, message_id=result.id, user_id=message.user_id)
     # Добавить связку в таблицу ChatUser между чатом и сообщением
-    result_chat_message = crud_chat_message.create_link(db, message)
+    result_chat_message = crud_chat_message.create_link(db, chat_id=message.chat_id, message_id=result.id)
     return result
-    # message_db = Message(id=len(messages_database) + 1, **message.dict()).dict()
-    # # Метка что чат найден
-    # found_chat = False
-    # # Поместить id сообщения к чату
-    # for chat in chat_database:
-    #     if chat["id"] == message_db["chat_id"]:
-    #         chat["messages_ids"].append(len(messages_database) + 1)
-    #         found_chat = True
-    # # Если чат к которому нужно подцепить сообщение не найден кидаем ошибку
-    # if found_chat == True:
-    #     return message_db
-    # else:
-    #     raise HTTPException(status_code=422, detail="Chat not found")
 
 
 @router.put("/{message_id}", response_model=Message)

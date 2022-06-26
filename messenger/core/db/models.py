@@ -45,7 +45,7 @@ class ChatMessage(Base):
     chat_id = Column(Integer, ForeignKey('chats.id'))
     message_id = Column(Integer, ForeignKey('messages.id'))
 
-class UserMessage(Base):
+class MessageUser(Base):
     __tablename__ = "users_messages"
 
     id = Column(Integer, primary_key=True, index=True)
