@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum
 import schemas.chat as schema
-from core.db.models import Chat
+from core.db.models import Chat, ChatMessage, Message
 from sqlalchemy.orm import Session
 
 
@@ -66,3 +66,10 @@ def update_chat(db: Session, chat: schema.ChatInDB):
     db.commit()
 
     return chat_db
+
+#Список из N последних сообщений в чате
+def get_last_messages(db: Session, chat_id: int, number_of_messages: int):
+    """Получить последние сообщения"""
+    chats_db = db.query(ChatMessage.message_id, Message.message).filter(ChatMessage.chat_id == chat_id).join(Message, Message.id == ChatMessage.message_id).order_by(Message.id.desc()).limit(number_of_messages).all()
+    print(chats_db, "chats_db")
+    return chats_db

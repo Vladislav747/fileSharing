@@ -24,10 +24,12 @@ async def get_chat(chat_id: int, db=Depends(get_db)):
     return chat
 
 
-@router.get("/last/{chat_id}/{number_of_messages}")
-async def get_last_messages(number_of_messages: int):
+@router.get("/last/")
+async def get_last_messages(number_of_messages: int, chat_id: int, db=Depends(get_db)):
     """Список из N последних сообщений в чате"""
-    return crud.chat_database[0]["messages_ids"][-number_of_messages:]
+    chat_db = crud.get_last_messages(db=db, chat_id=chat_id, number_of_messages=number_of_messages)
+
+    return chat_db
 
 
 @router.post("/", response_model=ChatInDB)
