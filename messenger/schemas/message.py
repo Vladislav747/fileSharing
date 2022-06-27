@@ -2,6 +2,8 @@ import datetime
 
 from pydantic import BaseModel
 
+from typing import Optional
+
 
 class Message(BaseModel):
     message: str
@@ -12,7 +14,7 @@ class Message(BaseModel):
 class MessageInDB(BaseModel):
     id: int
     message: str
-    created_date: datetime.datetime
+    created_date: Optional[datetime.datetime]
 
     class Config:
         orm_mode = True

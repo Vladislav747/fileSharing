@@ -34,18 +34,16 @@ async def add_message(message: Message, db=Depends(get_db)):
     return result
 
 
-@router.put("/{message_id}", response_model=Message)
-async def update_message(message_id: int, message: Message):
+@router.put("/", response_model=MessageInDB)
+async def update_message(message: MessageInDB, db=Depends(get_db)):
     # Редактирование сообщения подразумевает только изменение текста
-    message_db = crud.messages_database[message_id - 1]
-    for param, value in message.dict().items():
-        message_db[param] = value
+    message_db = crud.update_chat(db=db, message=message)
     return message_db
 
 
 @router.delete("/{message_id}", status_code=200)
 async def del_message(message_id: int, db=Depends(get_db)):
-    # Проверяем что у нас есть такое сообщение
+    # Проверяем что у нас есть такое сообщен ие
     message = crud.get_message_by_id(db=db, message_id=message_id)
     if message is not None:
         crud.delete_message(db=db, message_id=message_id)
@@ -55,16 +53,3 @@ async def del_message(message_id: int, db=Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Не найден id сообщение",
         )
-
-    #     # Метка что сообщение найдено
-#     found_message = False
-#
-#     del messages_database[message_id - 1]
-#     # Пробежаться по всем чатам
-#     # и посмотреть где содержится id сообщения и удалить из списка
-#     for chat in chat_database:
-#         if message_id in chat["messages_ids"]:
-#             index = chat["messages_ids"].index(message_id)
-#             del chat["messages_ids"][index]
-#
-#     return chat_database

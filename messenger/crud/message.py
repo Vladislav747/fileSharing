@@ -65,3 +65,14 @@ def delete_message(db: Session, message_id: int):
     """Удалить сообщение"""
     db.query(Message).filter(Message.id == message_id).delete()
     db.commit()
+
+
+def update_chat(db: Session, message: schema.Message):
+    """Обновить данные сообщение"""
+    message_db = db.query(Message).filter(Message.id == message.id).one_or_none()
+    for param, value in message.dict().items():
+        if value is not None:
+            setattr(message_db, param, value)
+    db.commit()
+
+    return message_db
