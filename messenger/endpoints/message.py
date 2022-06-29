@@ -4,6 +4,7 @@ import crud.message as crud
 import crud.message_user as crud_message_user
 import crud.chat_message as crud_chat_message
 import crud.chat_user as crud_chat_user
+import crud.chat as crud_chat
 from deps import get_db
 
 router = APIRouter(
@@ -31,6 +32,8 @@ async def add_message(message: Message, db=Depends(get_db)):
     result_chat_message = crud_chat_message.create_link(db, chat_id=message.chat_id, message_id=result.id)
     # Добавить связку в таблицу UserChat между чатом и сообщением
     result_chat_message = crud_chat_user.create_link(db, chat_id=message.chat_id, user_id=message.user_id)
+    # Добавить обновление для last_message для  чата
+    result_chat_message = crud_chat.update_last_time_chat(db, chat_id=message.chat_id)
     return result
 
 

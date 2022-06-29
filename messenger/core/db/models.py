@@ -21,6 +21,7 @@ class Chat(Base):
     name = Column(String)
     created_date = Column(DateTime, server_default=func.now())
     type = Column(String)
+    last_message = Column(DateTime, nullable=True)
 
 
 class UserChat(Base):

@@ -22,6 +22,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=True),
     sa.Column('created_date', sa.DateTime(), server_default=sa.text('now()'), nullable=True),
+    sa.Column('last_message', sa.DateTime(), nullable=True),
     sa.Column('type', sa.String(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )

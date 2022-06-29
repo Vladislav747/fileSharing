@@ -71,5 +71,17 @@ def update_chat(db: Session, chat: schema.ChatInDB):
 def get_last_messages(db: Session, chat_id: int, number_of_messages: int):
     """Получить последние сообщения"""
     chats_db = db.query(ChatMessage.message_id, Message.message).filter(ChatMessage.chat_id == chat_id).join(Message, Message.id == ChatMessage.message_id).order_by(Message.id.desc()).limit(number_of_messages).all()
-    print(chats_db, "chats_db")
+    return chats_db
+
+def update_last_time_chat(db: Session, chat_id: int):
+    """Обновить данные чата"""
+    chat_db = db.query(Chat).filter(Chat.id == chat_id).one_or_none()
+    setattr(chat_db, "last_message", datetime.now())
+    db.commit()
+
+    return chat_db
+
+def get_last_chats(db: Session, number_of_chats: int):
+    """Получить последние чаты по актуальности"""
+    chats_db = db.query(Chat).order_by(Chat.last_message.desc()).limit(number_of_chats).all()
     return chats_db
