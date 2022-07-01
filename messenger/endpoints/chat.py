@@ -33,7 +33,7 @@ async def get_last_messages(number_of_messages: int, chat_id: int, db=Depends(ge
 
 @router.get("/last-chats/")
 async def get_last_chats(number_of_chats: int, db=Depends(get_db)):
-    """Список из N последних сообщений в чате"""
+    """Список из N последних чатов где были сообщения"""
     chat_db = crud.get_last_chats(db=db, number_of_chats=number_of_chats)
 
     return chat_db

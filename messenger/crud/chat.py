@@ -83,5 +83,5 @@ def update_last_time_chat(db: Session, chat_id: int):
 
 def get_last_chats(db: Session, number_of_chats: int):
     """Получить последние чаты по актуальности"""
-    chats_db = db.query(Chat).order_by(Chat.last_message.desc()).limit(number_of_chats).all()
+    chats_db = db.query(Chat).order_by(Chat.last_message.asc()).limit(number_of_chats).all()
     return chats_db
