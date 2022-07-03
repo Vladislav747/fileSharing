@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from crud.user import authenticate
 from deps import get_db
-from security import create_access_token
+from security import create_access_token, create_refresh_token
 
 router = APIRouter(prefix="/login")
 
@@ -22,4 +22,5 @@ async def login_for_access_token(
         )
 
     access_token = create_access_token(user_id=user.id)
-    return {"access_token": access_token, "token_type": "bearer"}
+    refresh_token = create_refresh_token(login=form_data.username)
+    return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
