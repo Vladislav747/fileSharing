@@ -15,3 +15,7 @@ class UserInDB(User):
 
     class Config:
         orm_mode = True
+
+
+class RefreshToken(BaseModel):
+    refresh_token: str

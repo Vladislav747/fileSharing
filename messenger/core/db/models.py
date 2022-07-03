@@ -39,12 +39,14 @@ class Message(Base):
     message = Column(String)
     created_date = Column(DateTime, server_default=func.now())
 
+
 class ChatMessage(Base):
     __tablename__ = "chats_messages"
 
     id = Column(Integer, primary_key=True, index=True)
     chat_id = Column(Integer, ForeignKey('chats.id'))
     message_id = Column(Integer, ForeignKey('messages.id'))
+
 
 class MessageUser(Base):
     __tablename__ = "users_messages"

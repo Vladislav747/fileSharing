@@ -34,6 +34,7 @@ def verify_password(plain_password: str, hashed_password: str):
 
 
 def create_access_token(user_id: int, expires_delta: Optional[timedelta] = None):
+    """Сгенерировать access token"""
     to_encode = {"sub": str(user_id)}
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -52,6 +53,7 @@ def get_user_from_jwt(token: str):
         return None
 
     return user_id
+
 
 def create_refresh_token(login):
     """Сгенерировать refresh token"""

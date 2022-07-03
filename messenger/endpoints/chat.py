@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from schemas.chat import Chat, ChatInDB
-from deps import get_db
+from deps import get_db, get_current_user
 import crud.chat as crud
 
 router = APIRouter(
@@ -40,8 +40,15 @@ async def get_last_chats(number_of_chats: int, db=Depends(get_db)):
 
 
 @router.post("/", response_model=ChatInDB)
-async def add_chat(chat: Chat, db=Depends(get_db)):
-    result = crud.create_chat(db=db, chat=chat)
+async def add_chat(chat: Chat, db=Depends(get_db), user_id=Depends(get_current_user)):
+    if user_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not Authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    else:
+        result = crud.create_chat(db=db, chat=chat)
 
     return result
 
