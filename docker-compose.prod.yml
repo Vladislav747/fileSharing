@@ -18,10 +18,27 @@ services:
     env_file:
       - .env
 
-  postptocessor:
+  postprocessor:
     restart: always
     build:
       context: ./postprocessor
       dockerfile: ./Dockerfile
     env_file:
       - .env
+
+  flower:
+    container_name: flower
+    image: mher/flower:0.9.5
+    build: .
+    command: celery -A celery_worker.celery flower --port=5555
+    ports:
+      - 5556:5555
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - celery_worker
+      - messenger
