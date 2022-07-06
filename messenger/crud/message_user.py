@@ -9,3 +9,8 @@ def create_link(db: Session, user_id: int, message_id: int):
     db.commit()
 
     return message_user_db
+
+
+def get_message_by_id(db: Session, message_id: int):
+    """Получить сообщение по id"""
+    return db.query(MessageUser).filter(MessageUser.message_id == message_id).one_or_none()

@@ -38,6 +38,7 @@ class Message(Base):
     id = Column(Integer, primary_key=True, index=True)
     message = Column(String)
     created_date = Column(DateTime, server_default=func.now())
+    updated_date = Column(DateTime, server_default=func.now())
 
 
 class ChatMessage(Base):
