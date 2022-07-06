@@ -1,8 +1,6 @@
 """Различные методы проверки функционала"""
 from datetime import datetime
-from os import getenv
-import pytz
-
+import logging
 from fastapi import APIRouter, WebSocket, Body
 from fastapi.responses import HTMLResponse
 
@@ -11,6 +9,7 @@ from core.broker.redis import redis
 from utils import async_query
 
 router = APIRouter(prefix="/utils")
+logger = logging.getLogger("utils")
 
 
 @router.post("/send_celery_task")
@@ -20,10 +19,13 @@ def send_celery_task(begin_datetime: datetime):
     Args:
         begin_datetime: datetime, когда запустить задачу
     """
-    timezone = pytz.timezone(getenv("TZ"))
-    dt_with_timezone = timezone.localize(begin_datetime)
+    logger.info(
+        "utils",
+        extra={"test": "test"},
+    )
 
-    celery_app.send_task("queue.test", eta=dt_with_timezone)
+    ex = {"aa": 15}
+    celery_app.send_task("queue.test", eta=begin_datetime, comment_id="sdf")
 
 
 html = """
