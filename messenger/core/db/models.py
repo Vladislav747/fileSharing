@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -39,6 +39,7 @@ class Message(Base):
     message = Column(String)
     created_date = Column(DateTime, server_default=func.now())
     updated_date = Column(DateTime, server_default=func.now())
+    changed = Column(Boolean)
 
 
 class ChatMessage(Base):
@@ -56,3 +57,11 @@ class MessageUser(Base):
     message_id = Column(Integer, ForeignKey('messages.id'))
     user_id = Column(Integer, ForeignKey('users.id'))
 
+
+class MessageUserRead(Base):
+    __tablename__ = "messages_user_read"
+
+    id = Column(Integer, primary_key=True, index=True)
+    message_id = Column(Integer, ForeignKey('messages.id'))
+    user_id = Column(Integer, ForeignKey('users.id'))
+    message_is_readed = Column(Boolean, )

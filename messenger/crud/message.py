@@ -73,8 +73,9 @@ def update_message(db: Session, message: schema.Message):
     for param, value in message.dict().items():
         if value is not None:
             setattr(message_db, param, value)
-    #Обновить update_date время
+    # Обновить update_date время сообщения
     setattr(message_db, "updated_date", datetime.datetime.now())
+    setattr(message_db, "changed", True)
     db.commit()
 
     return message_db

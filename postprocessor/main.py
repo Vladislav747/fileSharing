@@ -16,6 +16,12 @@ def get_extra(text: str = Body(..., embed=True)):
     return domain.get_extra(text)
 
 
+@app.post("/extra-tags", response_model=List[Extra])
+def get_extra(text: str = Body(..., embed=True)):
+    """Получает все теги из текста"""
+    return domain.get_extra_tags(text)
+
+
 if __name__ == "__main__":
     uvicorn.run(
         "main:app",

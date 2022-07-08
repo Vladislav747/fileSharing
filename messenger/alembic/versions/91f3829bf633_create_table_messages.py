@@ -23,6 +23,7 @@ def upgrade():
     sa.Column('message', sa.String(), nullable=True),
     sa.Column('created_date', sa.DateTime(), server_default=sa.text('now()'), nullable=True),
     sa.Column('updated_date', sa.DateTime(), server_default=sa.text('now()'), nullable=True),
+    sa.Column('changed', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_messages_id'), 'messages', ['id'], unique=False)
