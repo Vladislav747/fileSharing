@@ -64,4 +64,4 @@ class MessageUserRead(Base):
     id = Column(Integer, primary_key=True, index=True)
     message_id = Column(Integer, ForeignKey('messages.id'))
     user_id = Column(Integer, ForeignKey('users.id'))
-    message_is_readed = Column(Boolean, )
+    message_is_read = Column(Boolean)
