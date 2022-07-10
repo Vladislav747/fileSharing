@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from psycopg2._psycopg import Int
-from schemas.message import Message, MessageInDB, MessageEdit
+from schemas.message import Message, MessageInDB, MessageEdit, MessageRead
 
 import crud.message as crud
 import crud.message_user as crud_message_user
@@ -39,6 +39,13 @@ async def get_all_readed_messages(chat_id: int, db=Depends(get_db), user_id=Depe
 @router.get("/{message_id}")
 async def get_message(message_id: int, db=Depends(get_db)):
     return crud.get_message_by_id(db, message_id)
+
+
+@router.post("/read-messages", status_code=200)
+async def update_message_user_read(read_body: MessageRead, db=Depends(get_db), user_id=Depends(get_current_user)):
+    result = crud_message_user_readed.update_message_user_read(db, chat_id=read_body.chat_id, user_id=user_id)
+    return result
+
 
 
 @router.post("/", response_model=MessageInDB)

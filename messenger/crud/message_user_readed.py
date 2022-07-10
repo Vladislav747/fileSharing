@@ -35,15 +35,12 @@ def delete_message_user_read(db: Session, message_id: int, user_id: int):
     db.commit()
 
 
-def update_message(db: Session, user_id: int, chat_id: int):
-    """Проставить метки о прочтении(прочтено) для всех сообщений в определенном чате"""
-    message_db = db.query(MessageUserRead).filter(Message.chat_id == message.chat_id).one_or_none()
-    for param, value in message.dict().items():
-        if value is not None:
-            setattr(message_db, param, value)
-    # Обновить update_date время сообщения
-    setattr(message_db, "updated_date", datetime.datetime.now())
-    setattr(message_db, "changed", True)
-    db.commit()
+def update_message_user_read(db: Session, user_id: int, chat_id: int):
+    """Проставить метки о прочтении(прочтено) для всех сообщений в определенном чате и для определенного пользователя"""
+    message_user_readed_db = db.query(MessageUserRead).join(ChatMessage, MessageUserRead.message_id == ChatMessage.message_id).filter(MessageUserRead.user_id == user_id, ChatMessage.chat_id == chat_id).all()
 
-    return message_db
+    # И для каждого пользователя создать метку
+    for value in message_user_readed_db:
+        setattr(value, "message_is_read", True)
+        db.add(value)
+        db.commit()

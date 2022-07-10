@@ -24,3 +24,7 @@ class MessageInDB(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class MessageRead(BaseModel):
+    chat_id: int
