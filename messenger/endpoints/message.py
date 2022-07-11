@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException, Depends, status
-from psycopg2._psycopg import Int
 from schemas.message import Message, MessageInDB, MessageEdit, MessageRead
 
 import crud.message as crud
@@ -9,6 +8,8 @@ import crud.chat_user as crud_chat_user
 import crud.chat as crud_chat
 import crud.message_user_readed as crud_message_user_readed
 import crud.user as crud_user
+
+from core.broker.redis import redis
 
 from deps import get_db, get_current_user
 
@@ -61,6 +62,8 @@ async def add_message(message: Message, db=Depends(get_db), user_id=Depends(get_
     result_chat_message = crud_chat.update_last_time_chat(db, chat_id=message.chat_id)
     # Добавить связку для  для  чата для статуса message_is_readed
     crud_message_user_readed.create_message_user_read(db, message_id=result.id, chat_id=message.chat_id)
+    # Известить вебсокет о новых сообщениях
+    await redis.publish(f"chat-{message.chat_id}", message.message)
     return result
 
 

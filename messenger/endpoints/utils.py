@@ -69,14 +69,14 @@ async def ws_page():
     return HTMLResponse(html)
 
 
-@router.websocket("/ws/{user_id}")
-async def websocket_endpoint(websocket: WebSocket, user_id: int):
-    if user_id is None:
+@router.websocket("/ws/{chat_id}")
+async def websocket_endpoint(websocket: WebSocket, chat_id: int):
+    if chat_id is None:
         return
 
     await websocket.accept()
     pubsub = redis.pubsub()
-    await pubsub.subscribe(f"user-{user_id}")
+    await pubsub.subscribe(f"chat-{chat_id}")
 
     while True:
         message = await pubsub.get_message(ignore_subscribe_messages=True)

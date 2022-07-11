@@ -11,3 +11,5 @@ python-multipart==0.0.5
 celery[redis]==5.0.5
 aiohttp==3.8.1
 datetime
+requests
+uvicorn[standard]
