@@ -13,3 +13,4 @@ aiohttp==3.8.1
 datetime
 requests
 uvicorn[standard]
+requests

@@ -1,23 +1,34 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from schemas.message import Message, MessageInDB, MessageEdit, MessageRead
+import requests
 
 import crud.message as crud
 import crud.message_user as crud_message_user
-import crud.chat_message as crud_chat_message
-import crud.chat_user as crud_chat_user
-import crud.chat as crud_chat
 import crud.message_user_readed as crud_message_user_readed
 import crud.user as crud_user
 
-from core.broker.redis import redis
-
 from deps import get_db, get_current_user
+
+from core.broker.celery import celery_app
 
 router = APIRouter(
     prefix="/messages",
     tags=['Messages']
 )
 
+@router.get("/get-tags/{message_id}", status_code=200)
+async def get_all_tags_messages(message_id: int, db=Depends(get_db)):
+    """Получить все хэштеги из сообщения"""
+    # Проверяем что у нас есть такое сообщение
+    message = crud.get_message_by_id(db=db, message_id=message_id)
+    if message is not None:
+        parsed_msg = await requests.post("http://localhost:8080/extra-tags", message.message)
+        return parsed_msg
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Не найдено сообщение",
+        )
 
 @router.get("/")
 async def get_all_messages(db=Depends(get_db)):
@@ -37,6 +48,8 @@ async def get_all_readed_messages(chat_id: int, db=Depends(get_db), user_id=Depe
         )
 
 
+
+
 @router.get("/{message_id}")
 async def get_message(message_id: int, db=Depends(get_db)):
     return crud.get_message_by_id(db, message_id)
@@ -49,22 +62,16 @@ async def update_message_user_read(read_body: MessageRead, db=Depends(get_db), u
 
 
 
-@router.post("/", response_model=MessageInDB)
+@router.post("/", status_code=200)
 async def add_message(message: Message, db=Depends(get_db), user_id=Depends(get_current_user)):
-    result = crud.create_message(db, message)
-    # Добавить связку в таблицу MessageUser между пользователем и сообщением
-    result_message_user = crud_message_user.create_link(db, message_id=result.id, user_id=user_id)
-    # Добавить связку в таблицу MessageChat между чатом и сообщением
-    result_chat_message = crud_chat_message.create_link(db, chat_id=message.chat_id, message_id=result.id)
-    # Добавить связку в таблицу UserChat между чатом и сообщением
-    result_chat_message = crud_chat_user.create_link(db, chat_id=message.chat_id, user_id=user_id)
-    # Добавить обновление для last_message для  чата
-    result_chat_message = crud_chat.update_last_time_chat(db, chat_id=message.chat_id)
-    # Добавить связку для  для  чата для статуса message_is_readed
-    crud_message_user_readed.create_message_user_read(db, message_id=result.id, chat_id=message.chat_id)
-    # Известить вебсокет о новых сообщениях
-    await redis.publish(f"chat-{message.chat_id}", message.message)
-    return result
+    print(message.delayed, "delayed")
+    if message.delayed is True:
+        print("here")
+        celery_app.send_task("queue.message", message=message, timeout=message.timeoutInS)
+    else:
+        result = await crud.create_message(db, message, user_id)
+
+    return {"msg": "Сообщение успешно создано"}
 
 
 @router.put("/", response_model=MessageInDB)

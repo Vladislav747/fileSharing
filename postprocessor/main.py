@@ -18,6 +18,7 @@ def get_extra(text: str = Body(..., embed=True)):
 
 @app.post("/extra-tags", response_model=List[Extra])
 def get_extra(text: str = Body(..., embed=True)):
+    print("here")
     """Получает все теги из текста"""
     return domain.get_extra_tags(text)
 

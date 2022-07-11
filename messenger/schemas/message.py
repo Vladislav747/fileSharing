@@ -8,6 +8,8 @@ from typing import Optional
 class Message(BaseModel):
     message: str
     chat_id: int
+    delayed: Optional[bool]
+    timeoutInS: Optional[int]
 
 
 class MessageEdit(BaseModel):

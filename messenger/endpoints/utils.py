@@ -24,7 +24,6 @@ def send_celery_task(begin_datetime: datetime):
         extra={"test": "test"},
     )
 
-    ex = {"aa": 15}
     celery_app.send_task("queue.test", eta=begin_datetime, comment_id="sdf")
 
 
