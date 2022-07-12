@@ -32,6 +32,5 @@ def update_refresh_token(
     token: RefreshToken,
 ):
     """Обновить токен"""
-    print(token.refresh_token, "token")
     new_tokens = refresh_token(token.refresh_token)
     return new_tokens

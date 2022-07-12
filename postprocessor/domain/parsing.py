@@ -38,4 +38,6 @@ def get_extra_tags(text: str):
 
     extra += get_tags(text)
 
+    print(extra, "extra")
+
     return extra

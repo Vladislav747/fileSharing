@@ -22,7 +22,6 @@ async def get_user(user_id=Depends(get_current_user), db=Depends(get_db)):
 async def create_user(user: UserCreate, db=Depends(get_db)):
     """Создать пользователя"""
     result = crud.create_user(db=db, user=user)
-    print(result, "here user")
     return result
 
 

@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from schemas.message import Message, MessageInDB, MessageEdit, MessageRead
-import requests
 
 import crud.message as crud
 import crud.message_user as crud_message_user
@@ -10,6 +9,8 @@ import crud.user as crud_user
 from deps import get_db, get_current_user
 
 from core.broker.celery import celery_app
+
+from utils_func import async_query
 
 router = APIRouter(
     prefix="/messages",
@@ -22,7 +23,7 @@ async def get_all_tags_messages(message_id: int, db=Depends(get_db)):
     # Проверяем что у нас есть такое сообщение
     message = crud.get_message_by_id(db=db, message_id=message_id)
     if message is not None:
-        parsed_msg = await requests.post("http://localhost:8080/extra-tags", message.message)
+        parsed_msg = await async_query(task_url="http://postprocessor:8080/extra-tags", text=message.message)
         return parsed_msg
     else:
         raise HTTPException(
@@ -64,10 +65,9 @@ async def update_message_user_read(read_body: MessageRead, db=Depends(get_db), u
 
 @router.post("/", status_code=200)
 async def add_message(message: Message, db=Depends(get_db), user_id=Depends(get_current_user)):
-    print(message.delayed, "delayed")
     if message.delayed is True:
         print("here")
-        celery_app.send_task("queue.message", message=message, timeout=message.timeoutInS)
+        # celery_app.send_task("queue.message", kwargs=dmessage=message, timeout=message.timeoutInS)
     else:
         result = await crud.create_message(db, message, user_id)
 
@@ -81,7 +81,6 @@ async def update_message(message: MessageInDB, db=Depends(get_db), user_id=Depen
     if int(current_msg.user_id) == int(user_id):
         # Редактирование сообщения подразумевает только изменение текста
         message_db = crud.update_message(db=db, message=message)
-        print(message_db.updated_date, "upd")
         return message_db
     else:
         raise HTTPException(

@@ -6,7 +6,7 @@ from fastapi.responses import HTMLResponse
 
 from core.broker.celery import celery_app
 from core.broker.redis import redis
-from utils import async_query
+from utils_func import async_query
 
 router = APIRouter(prefix="/utils")
 logger = logging.getLogger("utils")
