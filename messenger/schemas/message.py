@@ -9,7 +9,7 @@ class Message(BaseModel):
     message: str
     chat_id: int
     delayed: Optional[bool]
-    timeoutInS: Optional[int]
+    begin_datetime: Optional[datetime.datetime]
 
 
 class MessageEdit(BaseModel):

@@ -62,12 +62,11 @@ async def update_message_user_read(read_body: MessageRead, db=Depends(get_db), u
     return result
 
 
-
 @router.post("/", status_code=200)
 async def add_message(message: Message, db=Depends(get_db), user_id=Depends(get_current_user)):
     if message.delayed is True:
-        print("here")
-        # celery_app.send_task("queue.message", kwargs=dmessage=message, timeout=message.timeoutInS)
+        data = {"message": message.message, "user_id": user_id, "chat_id": message.chat_id}
+        celery_app.send_task("queue.message", eta=message.begin_datetime, kwargs=data)
     else:
         result = await crud.create_message(db, message, user_id)
 

@@ -1,5 +1,4 @@
 from datetime import datetime
-import time
 
 from core.broker.celery import celery_app
 
@@ -11,8 +10,9 @@ def test(comment_id):
 
 
 @celery_app.task(name="queue.message")
-def send_schedule_message(message, timeout):
-    print(message, "asd")
-    print(timeout, "delay_in_seconds")
-    print(datetime.now())
+def send_schedule_message(message: str, user_id: int, chat_id: int):
+    print(message, "message")
+    print(user_id, "user_id")
+    print(chat_id, "chat_id")
+
     return True
