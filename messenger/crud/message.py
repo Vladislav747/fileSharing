@@ -12,7 +12,7 @@ import crud.message_user_readed as crud_message_user_readed
 from core.broker.redis import redis
 
 
-async def create_message(db: Session, message: schema.Message, user_id):
+async def create_message(db: Session, message: schema.Message, user_id: int):
     """Создать сообщение и все связи"""
     result = create_message_db(db, message)
     # Добавить связку в таблицу MessageUser между пользователем и сообщением
