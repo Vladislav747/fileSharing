@@ -30,7 +30,7 @@ services:
     container_name: flower
     image: mher/flower:0.9.5
     build: .
-    command: celery -A celery_worker.celery flower --port=5555
+    command: celery -A celery_worker.celery flower --port=5555 -P solo
     ports:
       - 5556:5555
     environment:
