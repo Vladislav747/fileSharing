@@ -24,3 +24,9 @@ alembic upgrade e34025b07af2 - Применить конкретную мигр�
 ``bash
 python -m celery -A worker worker -l info -Q queue -P solo
 ``
+
+Боевая сборка
+``
+sudo docker-compose -f docker-compose.prod.yml up -d
+``
+ 

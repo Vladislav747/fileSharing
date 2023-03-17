@@ -1,5 +1,20 @@
 version: "3.6"
 services:
+
+  postgres:
+    image: postgres:14.2
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - "./postgres:/var/lib/postgresql/data"
+    env_file:
+      - .env
+  redis:
+    restart: always
+    image: redis:6.2-alpine
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+
   messenger:
     restart: always
     build:
@@ -29,7 +44,6 @@ services:
   flower:
     container_name: flower
     image: mher/flower:0.9.5
-    build: .
     command: celery -A celery_worker.celery flower --port=5555 -P solo
     ports:
       - 5556:5555

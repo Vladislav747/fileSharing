@@ -36,6 +36,7 @@ services:
 
   flower:
     container_name: flower
+    restart: always
     image: mher/flower:0.9.5
     build: .
     command: [
