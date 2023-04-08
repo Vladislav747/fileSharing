@@ -16,3 +16,4 @@ uvicorn[standard]
 requests
 asyncio
 aiofiles
+Pillow==9.2.0
