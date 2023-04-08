@@ -5,7 +5,7 @@ import sys
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-
+from core.db.models import Base
 from alembic import context
 
 CONTAINER_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -15,19 +15,22 @@ if CONTAINER_ROOT not in sys.path:
 config = context.config
 fileConfig(config.config_file_name)
 
-USER = os.getenv("POSTGRES_USER")
-PASS = os.getenv("POSTGRES_PASSWORD")
-DB = os.getenv("POSTGRES_DB")
-DB_HOST = os.getenv("POSTGRES_HOST", "postgres")
+USER = os.getenv("POSTGRES_USER", "postgres")
+PASS = os.getenv("POSTGRES_PASSWORD", "postgres")
+DB = os.getenv("POSTGRES_DB", "postgres")
+DB_HOST = "localhost"
 DB_PORT = os.getenv("POSTGRES_PORT", 5432)
 CONFIG_SECTION = "sqlalchemy.url"
 db_connection = f"postgresql://{USER}:{PASS}@{DB_HOST}:{DB_PORT}/{DB}"
+print(db_connection, "db_connection")
 config.set_main_option(CONFIG_SECTION, db_connection)
 
 # Таблицы, которые игнорируем при --autogenerate
 IGNORE_TABLES = ['events']
 IGNORE_INDICES = ['events']
 IGNORE_SCHEMAS = ['partman']
+
+target_metadata = Base.metadata
 
 
 def include_object(object, name, type_, reflected, compare_to):
