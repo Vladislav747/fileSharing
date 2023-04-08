@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, UploadFile, HTTPException
+from fastapi import APIRouter, status, UploadFile, HTTPException, Request
 from fastapi.responses import FileResponse
 from methods.file_methods import create_file, delete_image
 import os
@@ -11,7 +11,7 @@ router = APIRouter(
 
 
 @router.get("/download")
-async def download_file(filename: str):
+async def download_file(filename: str, request: Request):
     # specify the folder where the files are located
     folder = UPLOADED_FILES_PATH
     # get the file path by joining the folder path and file name
@@ -23,14 +23,17 @@ async def download_file(filename: str):
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
     # return the file as a response using the FileResponse class
+
+    host = request.headers["host"]
+    print(host, "host")
     return FileResponse(file_path)
 
 
 @router.post("/", status_code=status.HTTP_200_OK)
 async def send_file(file: UploadFile):
-    await create_file(file=file)
+    file_name = await create_file(file=file)
 
-    return "File loaded"
+    return f'{file_name} File loaded'
 
 
 @router.delete("/", status_code=status.HTTP_200_OK)

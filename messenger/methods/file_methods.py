@@ -29,6 +29,7 @@ async def create_file(
         file_is_png = await check_file_is_image(file)
         if(file_is_png is True):
             await save_file(file_name=file_name, file=file)
+            return file_name
         else:
             raise HTTPException(status_code=400, detail="File is not png or is not image")
     else:
