@@ -1,6 +1,8 @@
-import aiofiles
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile
-from uuid import uuid4
+from fastapi import APIRouter, status, UploadFile, HTTPException
+from fastapi.responses import FileResponse
+from methods.file_methods import save_video
+import os
+from settings import *
 
 router = APIRouter(
     prefix="/converter",
@@ -8,31 +10,41 @@ router = APIRouter(
 )
 
 
-@router.get("/")
-async def root():
-    return "hello"
+@router.get("/download")
+async def download_file(filename: str):
+    # specify the folder where the files are located
+    folder = UPLOADED_FILES_PATH
+    # get the file path by joining the folder path and file name
+    file_path = folder + "/" + filename
+    # check if the file exists
+    try:
+        file = open(file_path, "rb")
+        file.close()
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="File not found")
+    # return the file as a response using the FileResponse class
+    return FileResponse(file_path)
 
 
-@router.post("/")
+@router.post("/", status_code=status.HTTP_200_OK)
 async def send_file(file: UploadFile):
     await save_video(file)
 
-    return "hello"
+    return "File loaded"
 
 
-async def save_video(
-        file: UploadFile,
-):
-    file_name = f'{uuid4()}.png'
-    # TODO Проверить формат разрешения
-    if (file is not None):
-        await write_video(file_name, file)
-    else:
-        raise HTTPException(status_code=418, detail="It isn't mp4")
+@router.delete("/", status_code=status.HTTP_200_OK)
+async def delete_file(file_name: str):
+    print(file_name, "file_name delete")
+    # await delete_img(file_name)
 
-
-async def write_video(file_name: str, file: UploadFile):
-    async with aiofiles.open(file_name, "wb") as buffer:
-        data = await file.read()
-        # Пишу на жесткий диск
-        await buffer.write(data)
+    # specify the folder where the files are located
+    folder = UPLOADED_FILES_PATH
+    # get the file path by joining the folder path and file name
+    file_path = os.path.join(folder, file_name)
+    # check if the file exists
+    if not os.path.isfile(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+    # delete the file
+    os.remove(file_path)
+    return {"message": "File deleted"}
