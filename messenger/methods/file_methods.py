@@ -2,8 +2,13 @@ import os
 from settings import *
 from uuid import uuid4
 import aiofiles
-from fastapi import HTTPException, UploadFile, File
+from fastapi import HTTPException, UploadFile, File, Request
 from PIL import Image
+from typing import NamedTuple
+
+class CreateFileResponse(NamedTuple):
+    file_name: str
+    link: str
 
 
 def get_file_size(filename, path : str = None):
@@ -22,6 +27,7 @@ def delete_file_from_uploads(file_name):
 
 async def create_file(
     file: UploadFile,
+    request: Request
 ):
     file_name = f'{uuid4()}.png'
     # TODO Проверить формат разрешения
@@ -29,7 +35,9 @@ async def create_file(
         file_is_png = await check_file_is_image(file)
         if(file_is_png is True):
             await save_file(file_name=file_name, file=file)
-            return file_name
+            host = request.headers["host"]
+            link_to_download = f'{host}/converter/download?filename={file_name}'
+            return CreateFileResponse(file_name, link_to_download)
         else:
             raise HTTPException(status_code=400, detail="File is not png or is not image")
     else:
@@ -79,3 +87,19 @@ async def delete_image(file_name: str):
     # delete the file
     os.remove(file_path)
     return {"message": "File deleted"}
+
+
+async def get_file(filename: str):
+    # specify the folder where the files are located
+    folder = UPLOADED_FILES_PATH
+    # get the file path by joining the folder path and file name
+    file_path = folder + "/" + filename
+    # check if the file exists
+    try:
+        file = open(file_path, "rb")
+        file.close()
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="File not found")
+    # return the file as a response using the FileResponse class
+
+    return file_path
