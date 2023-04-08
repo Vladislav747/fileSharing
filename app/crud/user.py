@@ -8,7 +8,7 @@ from security import get_password_hash, verify_password
 def create_user(db: Session, user: schema.UserCreate):
     """Создать пользователя"""
     hashed_password = get_password_hash(user.password)
-    user_db = User(name=user.name, login=user.login, hashed_password=hashed_password)
+    user_db = User(login=user.login, hashed_password=hashed_password)
     db.add(user_db)
     db.commit()
 

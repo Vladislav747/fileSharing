@@ -1,9 +1,9 @@
 from datetime import datetime
 import asyncio
 
-from core.broker.celery import celery_app
+from app.broker.celery import celery_app
 import crud.message as crud
-from core.db.session import session
+from app.db.session import session
 from schemas.message import Message
 
 

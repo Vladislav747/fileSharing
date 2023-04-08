@@ -9,6 +9,5 @@ DB_PORT = getenv("DB_PORT")
 DB_NAME = getenv("POSTGRES_DB")
 
 db_url = f"postgresql://{USER}:{PASSWORD}@postgres:{DB_PORT}/{DB_NAME}"
-# sqllite_url = "sqlite://"
 engine = create_engine(db_url)
 session = sessionmaker(engine)
