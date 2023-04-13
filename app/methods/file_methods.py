@@ -1,7 +1,7 @@
 import os
 from settings import *
 from uuid import uuid4
-import aiofiles
+import aiofiles.os
 from fastapi import HTTPException, UploadFile, File, Request
 from PIL import Image
 from typing import NamedTuple
@@ -29,39 +29,26 @@ async def create_file(
     file: UploadFile,
     request: Request
 ):
-    file_name = f'{uuid4()}.png'
+    file_name = f'{uuid4()}.jpeg'
     # TODO Проверить формат разрешения
     if (file is not None):
-        file_is_png = await check_file_is_image(file)
-        if(file_is_png is True):
-            await save_file(file_name=file_name, file=file)
-            host = request.headers["host"]
-            link_to_download = f'{host}/converter/download?filename={file_name}'
-            return CreateFileResponse(file_name, link_to_download)
-        else:
-            raise HTTPException(status_code=400, detail="File is not png or is not image")
+        new_file_name = await convert_image(file_name=file_name, file=file)
+        # host = request.headers["host"]
+        link_to_download = f'localhost:8080/converter/download?filename={new_file_name}'
+        return CreateFileResponse(file_name, link_to_download)
     else:
         raise HTTPException(status_code=418, detail="It isn't mp4")
 
+async def convert_image(file_name: str, file: UploadFile = File(...)):
+    # Convert PNG to JPEG 
+    with Image.open(file.file) as im:
+        if im.format != "PNG":
+            raise HTTPException(status_code=422, detail="Wrong file format")
+        im.convert('RGB').save(
+            f'{UPLOADED_FILES_PATH}{file_name}'
+        ) 
 
-async def save_file(file_name: str, file: UploadFile):
-    file_path = f'{UPLOADED_FILES_PATH}{file_name}'
-    async with aiofiles.open(file_path, "wb") as buffer:
-        data = await file.read()
-        # Пишу на жесткий диск
-        await buffer.write(data)
-
-async def convert_image(file: UploadFile = File(...)):
-    image = Image.open(file.file)
-    if image.format != "PNG":
-        return {"error": "File is not in PNG format"}
-
-    # Convert PNG to JPEG
-    image = image.convert("RGB")
-    new_file_name = file.filename.replace(".png", ".jpeg")
-    image.save(new_file_name, "JPEG")
-
-    return {"file_name": new_file_name}
+    return file_name
 
 
 async def check_file_is_image(file: UploadFile = File(...)):
@@ -82,10 +69,10 @@ async def delete_image(file_name: str):
     # get the file path by joining the folder path and file name
     file_path = os.path.join(folder, file_name)
     # check if the file exists
-    if not os.path.isfile(file_path):
+    if not await aiofiles.os.path.isfile(f'{UPLOADED_FILES_PATH}{file_name}'):
         raise HTTPException(status_code=404, detail="File not found")
     # delete the file
-    os.remove(file_path)
+    await aiofiles.os.remove(f'{UPLOADED_FILES_PATH}{file_name}')
     return {"message": "File deleted"}
 
 

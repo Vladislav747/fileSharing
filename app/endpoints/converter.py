@@ -11,6 +11,7 @@ router = APIRouter(
 @router.get("/download")
 async def download_file(filename: str):
     file_path = await get_file(filename=filename)
+    await delete_image(file_name=filename)
     return FileResponse(file_path)
 
 
