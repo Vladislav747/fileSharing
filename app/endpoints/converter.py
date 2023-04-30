@@ -19,13 +19,17 @@ async def download_file(filename: str, background_tasks: BackgroundTasks):
 
 @router.post("/", status_code=status.HTTP_200_OK)
 async def send_file(file: UploadFile, request: Request, response: Response, count: str | None = Cookie(default=None)):
+    # Валидируем что файл загружается только формата image/png
+    if file.content_type != "image/png":
+        return HTTPException(status_code=422, detail="only png files are allowed")
+
     if count is not None and int(count) > 5:
         return HTTPException(status_code=422, detail="too much counts")
 
     initial_count = 0
     response.set_cookie(key="count", value=str(initial_count), max_age=60 * 60 * 24)
+    print(file.content_type, "file.content_type")
     file_name, link_to_download = await create_file(file=file, request=request)
-    print(count, "dfss")
 
     return {"msg": f'{file_name} File loaded', "link_to_download": link_to_download}
 

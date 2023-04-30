@@ -53,18 +53,6 @@ async def convert_image(file_name: str, file: UploadFile = File(...)):
     return file_name
 
 
-async def check_file_is_image(file: UploadFile = File(...)):
-    # Attempt to open file as image
-    try:
-        image = Image.open(file.file)
-        if image.format != "PNG":
-            return {"error": "File is not in PNG format"}
-    except:
-        return {"error": "File is not an image"}
-
-    return True
-
-
 async def delete_image(file_name: str):
     # specify the folder where the files are located
     folder = UPLOADED_FILES_PATH
