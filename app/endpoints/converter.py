@@ -2,6 +2,8 @@ from fastapi import APIRouter, status, UploadFile, Request, Cookie, HTTPExceptio
 from fastapi.responses import FileResponse
 from methods.file_methods import create_file, delete_image, get_file
 
+from starlette.background import BackgroundTasks
+
 router = APIRouter(
     prefix="/converter",
     tags=['converter']
@@ -9,9 +11,9 @@ router = APIRouter(
 
 
 @router.get("/download")
-async def download_file(filename: str):
+async def download_file(filename: str, background_tasks: BackgroundTasks):
     file_path = await get_file(filename=filename)
-    await delete_image(file_name=filename)
+    background_tasks.add_task(delete_image, file_name=filename)
     return FileResponse(file_path)
 
 

@@ -6,12 +6,13 @@ from fastapi import HTTPException, UploadFile, File, Request
 from PIL import Image
 from typing import NamedTuple
 
+
 class CreateFileResponse(NamedTuple):
     file_name: str
     link: str
 
 
-def get_file_size(filename, path : str = None):
+def get_file_size(filename, path: str = None):
     file_path = f'{UPLOADED_FILES_PATH}{filename}'
     if path:
         file_path = f'{path}{filename}'
@@ -26,8 +27,8 @@ def delete_file_from_uploads(file_name):
 
 
 async def create_file(
-    file: UploadFile,
-    request: Request
+        file: UploadFile,
+        request: Request
 ):
     file_name = f'{uuid4()}.jpeg'
     # TODO Проверить формат разрешения
@@ -39,6 +40,7 @@ async def create_file(
     else:
         raise HTTPException(status_code=418, detail="It isn't mp4")
 
+
 async def convert_image(file_name: str, file: UploadFile = File(...)):
     # Convert PNG to JPEG 
     with Image.open(file.file) as im:
@@ -46,7 +48,7 @@ async def convert_image(file_name: str, file: UploadFile = File(...)):
             raise HTTPException(status_code=422, detail="Wrong file format")
         im.convert('RGB').save(
             f'{UPLOADED_FILES_PATH}{file_name}'
-        ) 
+        )
 
     return file_name
 
@@ -77,10 +79,8 @@ async def delete_image(file_name: str):
 
 
 async def get_file(filename: str):
-    # specify the folder where the files are located
-    folder = UPLOADED_FILES_PATH
     # get the file path by joining the folder path and file name
-    file_path = folder + "/" + filename
+    file_path = UPLOADED_FILES_PATH + filename
     # check if the file exists
     try:
         file = open(file_path, "rb")
