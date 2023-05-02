@@ -1,6 +1,7 @@
 from fastapi import APIRouter, status, UploadFile, Request, Cookie, HTTPException, Response
 from fastapi.responses import FileResponse
 from methods.file_methods import create_file, delete_image, get_file
+from worker import create_task
 
 from starlette.background import BackgroundTasks
 
@@ -19,6 +20,8 @@ async def download_file(filename: str, background_tasks: BackgroundTasks):
 
 @router.post("/", status_code=status.HTTP_200_OK)
 async def send_file(file: UploadFile, request: Request, response: Response, count: str | None = Cookie(default=None)):
+    # celery задание
+    create_task.delay()
     # Валидируем что файл загружается только формата image/png
     if file.content_type != "image/png":
         return HTTPException(status_code=422, detail="only png files are allowed")

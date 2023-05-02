@@ -1,22 +1,15 @@
-from datetime import datetime
-import asyncio
+import os
+import time
 
-from app.broker.celery import celery_app
-import crud.message as crud
-from app.db.session import session
-from schemas.message import Message
+from celery import Celery
 
-
-@celery_app.task(name="queue.test")
-def test(comment_id):
-    print(datetime.now())
-    return True
+celery = Celery(__name__)
+celery.conf.broker_url = os.environ.get("CELERY_BROKER_URL", "redis://redis:6379")
+celery.conf.result_backend = os.environ.get("CELERY_RESULT_BACKEND", "redis://redis:6379")
 
 
-@celery_app.task(name="queue.message")
-def send_schedule_message(message: str, user_id: int, chat_id: int):
-    db = session()
-    async_func = crud.create_message(db, message=Message(chat_id=chat_id, message=message), user_id=user_id)
-    asyncio.run(async_func)
-
+@celery.task(name="create_task")
+def create_task():
+    print("create_task")
+    # time.sleep(int(12) * 10)
     return True

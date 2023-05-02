@@ -4,7 +4,7 @@ services:
     image: postgres:14.2
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
     networks:
-        - djangonetwork
+      - djangonetwork
     ports:
       - "${DB_PORT}:5432"
     volumes:
@@ -33,6 +33,28 @@ services:
     volumes:
       - ./app:/app
 
+
+  worker:
+    build: ./app
+    command: celery -A worker.celery worker --loglevel=info
+    networks:
+      - djangonetwork
+    volumes:
+      - ./app:/app
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - app
+      - redis
+
+  redis:
+    restart: always
+    image: redis:6.2-alpine
+    networks:
+      - djangonetwork
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
 
 networks:
   djangonetwork:

@@ -40,3 +40,5 @@ watchgod==0.8.2
 wcwidth==0.2.6
 websockets==10.3
 zope.interface==6.0
+celery==5.2.7
+redis==4.5.4
