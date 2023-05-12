@@ -1,5 +1,7 @@
 from fastapi import APIRouter, status, UploadFile, Request, Cookie, HTTPException, Response
+from fastapi.websockets import WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
+from redis import Redis
 from methods.file_methods import create_file, delete_image, get_file
 from worker import create_task
 
@@ -40,3 +42,33 @@ async def send_file(file: UploadFile, request: Request, response: Response, coun
 @router.delete("/", status_code=status.HTTP_200_OK)
 async def delete_file(file_name: str):
     return await delete_image(file_name=file_name)
+
+
+@router.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+
+    print("here")
+
+    while True:
+        try:
+            # Receive message from the frontend
+            message = await websocket.receive_text()
+
+            # Publish the message to Redis
+            Redis.publish("channel", message)
+
+        except WebSocketDisconnect:
+            break
+
+
+# Subscriber coroutine
+async def subscribe(websocket):
+    pubsub = Redis.pubsub()
+    pubsub.subscribe("channel")
+
+    # Read messages from Redis and send them to the subscribed websocket
+    for message in pubsub.listen():
+        if message["type"] == "message":
+            data = message["data"].decode("utf-8")
+            await websocket.send_text(data)
